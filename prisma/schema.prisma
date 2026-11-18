@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // Supabase pooled connection (port 6543, ?pgbouncer=true)
+  directUrl = env("DIRECT_URL")   // Supabase direct connection (port 5432), used by db push / migrate
+}
+
+model Receivable {
+  id          String    @id @default(cuid())
+  name        String    // who owes the money: "Rahul", "Sharma Traders"
+  amountPaise Int       // store paise, never floats
+  note        String?   // "Rent share for Nov", "Invoice #12"
+  dueDate     DateTime?
+  isReceived  Boolean   @default(false)
+  receivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([isReceived, dueDate])
+}
